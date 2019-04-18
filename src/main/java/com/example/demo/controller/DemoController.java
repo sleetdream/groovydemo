@@ -22,8 +22,14 @@ public class DemoController {
     @GetMapping(value = "/test1/{id}")
     public String myTest1(@PathVariable String id){
         try{
-            //通过JAVA来加载如一个groovy脚本文件，然后调用该脚本中的方法
-            ClassLoader parent = ClassLoader.getSystemClassLoader();
+
+//            ClassLoader parent = ClassLoader.getSystemClassLoader();
+            /**
+             * 通过JAVA来加载如一个groovy脚本文件，然后调用该脚本中的方法
+             * 处理java调用groovy :unable to resolve class异常
+             * 这么写使得groovy能调用本项目的类
+             */
+            ClassLoader parent = this.getClass().getClassLoader();
             GroovyClassLoader loader = new GroovyClassLoader(parent);
             Class groovyClass = loader.parseClass(
                     new File("src/main/java/com/example/demo/groovyscript/"+id+".groovy")
