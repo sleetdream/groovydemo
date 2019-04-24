@@ -23,16 +23,16 @@ public class DemoController {
     public String myTest1(@PathVariable String id){
         try{
 
-//            ClassLoader parent = ClassLoader.getSystemClassLoader();
             /**
              * 通过JAVA来加载如一个groovy脚本文件，然后调用该脚本中的方法
              * 处理java调用groovy :unable to resolve class异常
              * 这么写使得groovy能调用本项目的类
              */
+            //ClassLoader parent = ClassLoader.getSystemClassLoader();
             ClassLoader parent = this.getClass().getClassLoader();
             GroovyClassLoader loader = new GroovyClassLoader(parent);
             Class groovyClass = loader.parseClass(
-                    new File("src/main/java/com/example/demo/groovyscript/"+id+".groovy")
+                    new File("src/main/java/com/example/demo/groovyscript/1.groovy")
             );
 
             GroovyObject groovyObject= (GroovyObject)groovyClass.newInstance();
@@ -41,9 +41,8 @@ public class DemoController {
             return result;
         }
         catch (Exception ex){
-
+            return ex.toString();
         }
-        return "error";
     }
 
     /**
@@ -54,10 +53,9 @@ public class DemoController {
     @GetMapping(value = "/test2/{id}")
     public String myTest2(@PathVariable String id){
         try{
-            //通过设定CLASSPATH来初始化groovy脚本引擎，可以运行该path下的任何groovy脚本文件了
             String path= "src/main/java/com/example/demo/groovyscript";
             GroovyScriptEngine engine = new GroovyScriptEngine(path);
-            Script script = engine.createScript(id+".groovy", new Binding());
+            Script script = engine.createScript("2.groovy", new Binding());
             return (String) script.invokeMethod("test",id);
         }
         catch (Exception ex){
@@ -73,13 +71,12 @@ public class DemoController {
     @GetMapping(value = "/test3/{id}")
     public String myTest3(@PathVariable String id){
         try{
-            //通过设定CLASSPATH来初始化groovy脚本引擎，可以运行该path下的任何groovy脚本文件了
             String path="src/main/java/com/example/demo/groovyscript";
             GroovyScriptEngine engine = new GroovyScriptEngine(path);
 
             Binding binding = new Binding();
             binding.setVariable("id",id);
-            engine.run(id+".groovy",binding);
+            engine.run("3.groovy",binding);
             return binding.getVariable("output").toString();
         }
         catch (Exception ex){
